@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { inactiveProductCase } from "../../application/usecase/inactivateProductUseCase";
+import { InactivateProductUseCase } from "../../application/inactivateProduct";
 import { product } from "../../domain/entities/product";
 
 export class inactiveProductController {
     constructor(
-        readonly inactiveProductUseCase: inactiveProductCase
+        readonly inactiveProductUseCase: InactivateProductUseCase
     ) { }
 
     async inactiveProduct(req: Request, res: Response) {

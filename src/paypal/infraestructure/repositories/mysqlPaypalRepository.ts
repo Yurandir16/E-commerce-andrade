@@ -28,15 +28,18 @@ export class PaypalRepositoryr implements paypalRepository {
     //     }
     // }
 
-    async createPaypal(id: number): Promise<any | null> {
+    async createPaypal(uuid:string): Promise<any | null> {
         const client = process.env.CLIENT_SECRET
         const secret = process.env.SECRET_KEY
         const host = process.env.HOST_API
         try {
             console.log("Conexión exitosa a la BD");
-            if (!isNaN(id)) {
-                const sql = "";
-                const result = await query(sql, [id]);
+            if (uuid!=null) {
+                const sql = `SELECT  p.price
+                FROM cartShopping cs JOIN user u ON cs.user_id = u.uuid JOIN products p ON cs.product_id = p.id
+                WHERE u.uuid = ?;	
+              `;
+                const result = await query(sql, [uuid]);
                 console.log(query);
 
                 if (result.length > 0) {
@@ -52,7 +55,7 @@ export class PaypalRepositoryr implements paypalRepository {
                         application_context: {
                             brand_name: `ANDRADE TECNOLOGY THAT INSPIRES`,
                             landing_page: 'NO_PREFERENCE',
-                            user_action: 'PAY_NOW',
+                            user_action: 'PAGO DE PRODUCTOS',
                             return_url: `http://localhost:3000/Paypal/extracter_payment`,
                             cancel_url: `http://localhost:3000/cancel-payment`
                         }

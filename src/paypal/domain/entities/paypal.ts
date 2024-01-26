@@ -1,5 +1,5 @@
 export class paypal{
     constructor(
-        public id:number
+        public uuid:string
     ){}
 }

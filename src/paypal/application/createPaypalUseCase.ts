@@ -6,10 +6,10 @@ export class CreatePaypalUseCase {
     constructor(readonly paypalRepository: paypalRepository){}
 
     async run (
-        id:number
+        uuid:string
     ): Promise< null | string | Error>{
 
-        let data = new ValidationCreatePaypal(id);
+        let data = new ValidationCreatePaypal(uuid);
         const validation = await validate(data)
         console.log(validation)
         if(validation.length > 0){
@@ -18,7 +18,7 @@ export class CreatePaypalUseCase {
 
         try{
             const createPaypal = await this.paypalRepository.createPaypal(
-                id
+                uuid
             );
 
             return createPaypal;

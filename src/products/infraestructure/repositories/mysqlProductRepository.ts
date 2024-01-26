@@ -1,12 +1,12 @@
 import { product } from "../../domain/entities/product";
-import { ProductRepository } from "../../domain/repositories/productRepository";
+import { productsRepository } from "../../domain/repositories/productRepository";
 import { query } from "../../../database/connection";
 import fs from 'fs';
 import util from 'util';
 
 const unlinkAsync = util.promisify(fs.unlink);
 
-export class mysqlProductRepositorys implements ProductRepository {
+export class mysqlProductRepositorys implements productsRepository {
   async createProduct(
     id: number,
     namePart: string,
@@ -33,6 +33,7 @@ export class mysqlProductRepositorys implements ProductRepository {
         status,
       ];
       console.log(params);
+      console.log("entro a sentencia")
       const [result]: any = await query(sql, params);
       console.log(result);
       return new product(
@@ -52,32 +53,32 @@ export class mysqlProductRepositorys implements ProductRepository {
     }
   }
 
-  async listAllProduct(): Promise<product[]> {
-    try {
-      const sql = "SELECT * FROM products";
-      const [rows]: any = await query(sql, []);
-      if (rows[0]) {
-        return rows.map((row: any) => ({
-          id: row.id,
-          namePart: row.namePart,
-          numberPart: row.numberPart,
-          amount: row.amount,
-          image: row.image,
-          description: row.description,
-          price: row.price,
-          conditions: row.conditions,
-          status: row.status
-        }));
-      } else {
-        throw new Error(
-          "No se encontró ningún product"
-        );
-      }
-    } catch (error) {
-      console.error("Error al listar revisiones:", (error as Error).message);
-      throw new Error("Error al listar revisiones");
-    }
-  }
+  // async listAllProduct(): Promise<product[]> {
+  //   try {
+  //     const sql = "SELECT * FROM products";
+  //     const [rows]: any = await query(sql, []);
+  //     if (rows[0]) {
+  //       return rows.map((row: any) => ({
+  //         id: row.id,
+  //         namePart: row.namePart,
+  //         numberPart: row.numberPart,
+  //         amount: row.amount,
+  //         image: row.image,
+  //         description: row.description,
+  //         price: row.price,
+  //         conditions: row.conditions,
+  //         status: row.status
+  //       }));
+  //     } else {
+  //       throw new Error(
+  //         "No se encontró ningún product"
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error("Error al listar revisiones:", (error as Error).message);
+  //     throw new Error("Error al listar revisiones");
+  //   }
+  // }
 
   async updateProduct(
     id: number,
@@ -93,6 +94,8 @@ export class mysqlProductRepositorys implements ProductRepository {
     try {
       let sql =
         "UPDATE products SET namePart = ?, numberPart = ?, amount = ?, image = ?, description = ?, price = ?, conditions = ?, status = ? WHERE id = ?";
+        console.log("entro sentencia")
+
       const params: any[] = [
         namePart,
         numberPart,
@@ -136,6 +139,7 @@ export class mysqlProductRepositorys implements ProductRepository {
         status,
         id,
       ];
+      console.log("entro sentencia")
       console.log(params);
       const [result]: any = await query(sql, params);
       console.log(result);
@@ -165,6 +169,7 @@ export class mysqlProductRepositorys implements ProductRepository {
       const [product]: any = await query("SELECT image FROM products WHERE id = ?", [id]);
       const imageName = product.image;
       const [result]: any = await query(sql, params);
+      console.log("entro a las sentencias")
 
       if (result.affectedRows > 0) {
         if (imageName) {
@@ -180,10 +185,11 @@ export class mysqlProductRepositorys implements ProductRepository {
       return false;
     }
   }
-  async listAllProductClientCase(): Promise<product[]> {
+  async viewProduct(): Promise<product[]> {
     try {
       const sql = "SELECT * FROM products";
       const [rows]: any = await query(sql, []);
+      console.log("entro a sentencia")
       if (rows[0]) {
         return rows.map((row: any) => ({
           id: row.id,
@@ -196,6 +202,7 @@ export class mysqlProductRepositorys implements ProductRepository {
           conditions: row.conditions,
           status: row.status
         }));
+        
       } else {
         throw new Error(
           "No se encontró ningún product"

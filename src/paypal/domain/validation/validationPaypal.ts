@@ -2,12 +2,12 @@ import { IsInt,IsString, IsUUID, Length, IsBoolean, IsNotEmpty, ValidateIf, IsIn
 
 export class ValidationCreatePaypal{
     @IsNotEmpty()
-    @IsNumber()
-    public id:number;
+    @IsString()
+    public uuid:string;
 
     constructor(
-        id:number
+        uuid:string
     ){
-        this.id=id
+        this.uuid=uuid
     }
 }
