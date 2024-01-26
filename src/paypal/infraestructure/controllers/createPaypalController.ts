@@ -7,10 +7,10 @@ export class CreatePaypalController {
         console.log("controller")
 
         try {
-            let id= Number(req.params.id);          
+            let uuid= req.params.id;          
 
             let createPaypal = await this.createPaypalCase.run(
-                id
+                uuid
             )
 
             if (createPaypal instanceof Error) {

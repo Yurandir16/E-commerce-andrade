@@ -14,7 +14,7 @@ export class updateProductControlller {
         try {
             let id = Number(req.params.id);
             let namePart = req.body.namePart;
-            let numberPart = req.body.numberPart;
+            let numberPart = Number(req.body.numberPart);
             let amount = Number(req.body.amount);
             let image = req.file?.originalname ||'';
             let description = req.body.description;

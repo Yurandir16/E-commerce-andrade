@@ -14,7 +14,7 @@ export class createProductControlller {
         try {
             let id = Number(req.body.id);
             let namePart = req.body.namePart;
-            let numberPart = req.body.numberPart;
+            let numberPart = Number(req.body.numberPart);
             let amount = Number(req.body.amount);
             let image = req.file?.originalname ||'';
             let description = req.body.description;
