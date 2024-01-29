@@ -26,72 +26,83 @@ export class PaypalRepositoryr implements paypalRepository {
     //             conn.release(); // Devuelve la conexión al pool al finalizar
     //         }
     //     }
+
     // }
 
     async createPaypal(uuid:string): Promise<any | null> {
         const client = process.env.CLIENT_SECRET
         const secret = process.env.SECRET_KEY
         const host = process.env.HOST_API
+    
         try {
             console.log("Conexión exitosa a la BD");
             if (uuid!=null) {
-                const sql = `SELECT  p.price
+                const sql = `SELECT  SUM(p.price)
                 FROM cartShopping cs JOIN user u ON cs.user_id = u.uuid JOIN products p ON cs.product_id = p.id
                 WHERE u.uuid = ?;	
               `;
                 const result = await query(sql, [uuid]);
-                console.log(query);
+                
+                console.log(result)
 
                 if (result.length > 0) {
-                    const amount = result[0].amount;
-                    const body = {
-                        intent: 'CAPTURE',
-                        purchase_units: [{
-                            amount: {
-                                currency_code: 'MXN',
-                                value: amount 
+                    //const amount = result[0].amount;
+                    const amount = result[0][0]['SUM(p.price)'];
+
+                    if (typeof amount !== 'undefined') {
+                        console.log(amount)
+                        const body = {
+                            intent: 'CAPTURE',
+                            purchase_units: [{
+                                amount: {
+                                    currency_code: 'MXN',
+                                    value: amount 
+                                }
+                            }],
+                            application_context: {
+                                brand_name: `ANDRADE TECNOLOGY THAT INSPIRES`,
+                                landing_page: 'NO_PREFERENCE',
+                                user_action: 'PAY_NOW',
+                                return_url: `http://localhost:3000/paypal/extracter_payment/`,
+                                cancel_url: `http://localhost:3000/cancel-payment`
                             }
-                        }],
-                        application_context: {
-                            brand_name: `ANDRADE TECNOLOGY THAT INSPIRES`,
-                            landing_page: 'NO_PREFERENCE',
-                            user_action: 'PAGO DE PRODUCTOS',
-                            return_url: `http://localhost:3000/Paypal/extracter_payment`,
-                            cancel_url: `http://localhost:3000/cancel-payment`
-                        }
-                    };
-
-                    const options = {
-                        hostname: host,
-                        port: 443,
-                        path: '/v2/checkout/orders',
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Basic ' + Buffer.from(`${client}:${secret}`).toString('base64')
-                        }
-                    };
-                    return new Promise((resolve, reject) => {
-                        const req = https.request(options, (res) => {
-                            let data = '';
-
-                            res.on('data', (chunk) => {
-                                data += chunk;
+                        };
+    
+                        const options = {
+                            hostname: host,
+                            port: 443,
+                            path: '/v2/checkout/orders',
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Basic ' + Buffer.from(`${client}:${secret}`).toString('base64')
+                            }
+                        };
+                        return new Promise((resolve, reject) => {
+                            const req = https.request(options, (res) => {
+                                let data = '';
+    
+                                res.on('data', (chunk) => {
+                                    data += chunk;
+                                });
+    
+                                res.on('end', () => {
+                                    resolve(JSON.parse(data));
+                                });
                             });
-
-                            res.on('end', () => {
-                                resolve(JSON.parse(data));
+    
+                            req.on('error', (error) => {
+                                console.error(error);
+                                reject(null);
                             });
+    
+                            req.write(JSON.stringify(body));
+                            req.end();
                         });
-
-                        req.on('error', (error) => {
-                            console.error(error);
-                            reject(null);
-                        });
-
-                        req.write(JSON.stringify(body));
-                        req.end();
-                    });
+                    } else {
+                        console.error('Amount is undefined');
+                        return null; 
+                    }    
                 } else {
                     return null;
                 }
@@ -99,15 +110,10 @@ export class PaypalRepositoryr implements paypalRepository {
         } catch (error) {
             console.log(error);
             return null;
-        } //finally {
-        //     if (query) {
-        //         query.release(); // Devuelve la conexión al pool al finalizar
-        //     }
-        // }
-
+        } 
     }
 
-    async getPaypal(token: string): Promise<any | null> {
+    async viewPaypal(token: string): Promise<any | null> {
 
         const client = process.env.CLIENT_SECRET
         const secret = process.env.SECRET_KEY

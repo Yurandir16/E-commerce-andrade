@@ -13,7 +13,7 @@ const config = {
     port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306, // Lee el puerto desde las variables de entorno o usa el valor predeterminado 3306
 };
 
-const pool = mysql.createPool(config);
+export const pool = mysql.createPool(config);
 
 
 export async function query(sql: string, params: any[]): Promise<any[]> {

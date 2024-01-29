@@ -17,7 +17,7 @@ app.use('/admin', proRoutes);
 app.use('/client',proClientRoutes);
 app.use('/cart',cartRoute);
 app.use('/user',userRoutes);
-app.use('/payment',paypalRoutes);
+app.use('/paypal',paypalRoutes);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
