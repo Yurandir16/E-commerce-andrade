@@ -1,5 +1,5 @@
 import express from "express";
-import { createProController, viewProController, inactiveProController, deleteProController, updateProController, viewImageProController} from "../dependencies/dependencies";
+import { createProController, viewProController, inactiveProController, deleteProController, updateProController, viewImageProController, viewReShopController, viewUserShopController} from "../dependencies/dependencies";
 import multer from "multer";
 
 const storage = multer.diskStorage({
@@ -19,7 +19,10 @@ export const proRoutes = express.Router();
 proRoutes.post('/addProduct', upload.single('image'), createProController.createProduct.bind(createProController));
 proRoutes.get('/viewImage', viewImageProController.viewImageProduct.bind(viewImageProController));
 proRoutes.get('/listProduct', viewProController.viewProduct.bind(viewProController));
-proRoutes.delete('/destroyProduct/:id', deleteProController.deleteProduct.bind(deleteProController));
+proRoutes.get('/viewRegisterShop',viewReShopController.viewRegisterShop.bind(viewReShopController));
+proRoutes.get('/viewUserShop/:customer_id',viewUserShopController.viewShopUser.bind(viewUserShopController));
 proRoutes.put('/inactivateProduc/:id', inactiveProController.inactiveProduct.bind(inactiveProController));
 proRoutes.put('/updateProduc/:id', upload.single('image'), updateProController.updateProduct.bind(updateProController));
+proRoutes.delete('/destroyProduct/:id', deleteProController.deleteProduct.bind(deleteProController));
+
 

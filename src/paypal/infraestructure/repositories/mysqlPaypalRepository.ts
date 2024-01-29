@@ -3,32 +3,6 @@ import https from 'https';
 import { query } from "../../../database/connection";
 
 export class PaypalRepositoryr implements paypalRepository {
-    // async createPayment(payment: PaymentData): Promise<Payment | null> {
-    //     let conn;
-    //     try {
-    //         conn = await pool.getConnection();
-
-    //         const formattedDate = format(new Date(payment.payment_date), 'yyyy-MM-dd HH:mm:ss');
-    //         console.log("Conexión exitosa a la BD");
-    //         const query = "INSERT INTO Payment (id, amount, payment_date, status, token, metaData, id_contract, id_payment_method, id_card, id_user) VALUES (?,?,?,?,?,?,?,?,?,?)";
-    //         const result = await conn.query(query, [payment.id, payment.amount, formattedDate, payment.status, payment.token, JSON.stringify(payment.metaData), payment.id_contract, payment.id_payment_method, payment.id_card, payment.id_user]);
-    //         console.log(query);
-    //         if (result.affectedRows > 0) {
-    //             return payment;
-    //         } else {
-    //             return null;
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //         return null;
-    //     } finally {
-    //         if (conn) {
-    //             conn.release(); // Devuelve la conexión al pool al finalizar
-    //         }
-    //     }
-
-    // }
-
     async createPaypal(uuid:string): Promise<any | null> {
         const client = process.env.CLIENT_SECRET
         const secret = process.env.SECRET_KEY
@@ -46,7 +20,6 @@ export class PaypalRepositoryr implements paypalRepository {
                 console.log(result)
 
                 if (result.length > 0) {
-                    //const amount = result[0].amount;
                     const amount = result[0][0]['SUM(p.price)'];
 
                     if (typeof amount !== 'undefined') {
@@ -119,36 +92,83 @@ export class PaypalRepositoryr implements paypalRepository {
         const secret = process.env.SECRET_KEY
         const host = process.env.HOST_API
 
-        const options = {
-            hostname: host,
-            port: 443,
-            path: `/v2/checkout/orders/${token}/capture`,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + Buffer.from(`${client}:${secret}`).toString('base64')
-            }
-        };
-        return new Promise((resolve, reject) => {
-            const req = https.request(options, (res) => {
-                let data = '';
+        console.log("entro en viewpaypal")
 
-                res.on('data', (chunk) => {
-                    data += chunk;
+        try {
+            const options = {
+                hostname: host,
+                port: 443,
+                path: `/v2/checkout/orders/${token}/capture`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + Buffer.from(`${client}:${secret}`).toString('base64')
+                }
+            };
+            return new Promise((resolve, reject) => {
+                const req = https.request(options, (res) => {
+                    let data = '';
+    
+                    res.on('data', (chunk) => {
+                        data += chunk;
+                        console.log(data)
+
+                        try {
+                            const orderData = JSON.parse(data);
+                    
+                            const customerId = orderData.payment_source.paypal.account_id;
+                            const givenName = orderData.payment_source.paypal.name.given_name;
+                            const surname = orderData.payment_source.paypal.name.surname;
+                            const emailAddress = orderData.payment_source.paypal.email_address;
+                            const countryCode = orderData.payment_source.paypal.address.country_code;
+                            const addressLine1 = orderData.purchase_units[0].shipping.address.address_line_1;
+                            const addressLine2 = orderData.purchase_units[0].shipping.address.address_line_2;
+                            const adminArea1 = orderData.purchase_units[0].shipping.address.admin_area_1;
+                            const adminArea2 = orderData.purchase_units[0].shipping.address.admin_area_2;
+                            const postalCode = orderData.purchase_units[0].shipping.address.postal_code;
+                            const currencyCode = orderData.purchase_units[0].payments.captures[0].amount.currency_code;
+                            const amount = orderData.purchase_units[0].payments.captures[0].amount.value;
+                    
+                            const insertQuery = `
+                                INSERT INTO customer_data (
+                                    customer_id, given_name, surname, email_address, country_code,
+                                    address_line_1, address_line_2, admin_area_1, admin_area_2,
+                                    postal_code, currency_code, amount
+                                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            `;
+                    
+                            const values = [
+                                customerId, givenName, surname, emailAddress, countryCode,
+                                addressLine1, addressLine2, adminArea1, adminArea2,
+                                postalCode, currencyCode, amount
+                            ];
+                    
+                            query(insertQuery, values);
+                    
+                            console.log('Datos del cliente insertados correctamente.');
+                        } catch (error) {
+                            console.error('Error al insertar datos del cliente:', error);
+                            return null;
+                        }
+                    });
+    
+                    res.on('end', () => {
+                        resolve(JSON.parse(data));
+                    });
                 });
-
-                res.on('end', () => {
-                    resolve(JSON.parse(data));
+    
+                req.on('error', (error) => {
+                    console.error(error);
+                    reject(null);
                 });
+    
+                req.write(JSON.stringify({}));
+                req.end();
             });
-
-            req.on('error', (error) => {
-                console.error(error);
-                reject(null);
-            });
-
-            req.write(JSON.stringify({}));
-            req.end();
-        });
+        } catch (error) {
+            console.log(error);
+            return null
+        }
+      
     }
 }

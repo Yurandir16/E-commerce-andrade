@@ -10,6 +10,10 @@ import { inactiveProductController } from "../controllers/inactivateProductContr
 import { deleteProductControlller } from "../controllers/deleteProductController";
 import { viewProductController } from "../controllers/viewProductController";
 import { viewImageProductController } from "../controllers/viewImageController";
+import { viewRegisterShopUseCase } from "../../application/viewRegisterUserShopUseCase";
+import { viewUserShopReUseCase } from "../../application/viewUserShopUseCase";
+import { viewRegisterShopController } from "../controllers/viewRegisterUserShopController";
+import { viewShopUserController } from "../controllers/viewUserShopController";
 
 const mysqlProduct = new mysqlProductRepositorys();
 
@@ -18,11 +22,14 @@ const updateProCase = new UpdateProductUseCase(mysqlProduct);
 const deleteProCase = new DeleteProductUseCase(mysqlProduct);
 const inactivateProCase = new InactivateProductUseCase(mysqlProduct);
 const viewProCase = new ViewProductUseCase(mysqlProduct);
-
+const viewShopReCase = new viewRegisterShopUseCase(mysqlProduct);
+const viewUserShop = new viewUserShopReUseCase(mysqlProduct);
 
 export const createProController = new createProductControlller(createProCase);
 export const updateProController = new updateProductControlller(updateProCase);
 export const deleteProController = new deleteProductControlller(deleteProCase);
 export const inactiveProController = new inactiveProductController(inactivateProCase);
 export const viewProController = new viewProductController(viewProCase);
-export const viewImageProController = new viewImageProductController()
+export const viewImageProController = new viewImageProductController();
+export const viewReShopController = new viewRegisterShopController(viewShopReCase);
+export const viewUserShopController = new viewShopUserController(viewUserShop);

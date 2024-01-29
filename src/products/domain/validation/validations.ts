@@ -124,7 +124,6 @@ export class ValidatorUpdateProduct{
 
 }
 
-
 export class ValidatorDeleteProduct{
     @IsNotEmpty()
     @IsNumber()
@@ -137,6 +136,30 @@ export class ValidatorDeleteProduct{
     }
 }
 
+export class validatorViewUserShop{
+    @IsNotEmpty()
+    @IsString()
+    public customer_id:string;
+
+    constructor(
+        customer_id:string
+    ){
+        this.customer_id=customer_id
+    }
+}
+
+
+export class validatorImage{
+    @IsNotEmpty()
+    @IsString()
+    public image:string;
+
+    constructor(
+        image:string
+    ){
+        this.image=image;
+    }
+}
 export class ValidatorInactivateProduct{
     @IsNotEmpty()
     @IsNumber()
