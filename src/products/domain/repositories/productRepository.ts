@@ -8,5 +8,5 @@ export interface productsRepository{
     deleteProduct(id:number):Promise<boolean|string>;
     viewProduct():Promise<product[]|null> ;
     viewRegisterShop():Promise<shoppingRe[]|null>;
-    viewUserShop(customer_id:string):Promise<shoppingRe|null|string>;
+    viewUserShop(customer_id:string):Promise<shoppingRe|null|string|any>;
 }

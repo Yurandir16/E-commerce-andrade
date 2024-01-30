@@ -26,13 +26,13 @@ export class mysqlProductRepositorys implements productsRepository {
     }
   }
 
-  async updateProduct(id: number,namePart: string,numberPart: number,amount: number,image: string,description: string,price: number,conditions: string,status: boolean): Promise<product | null> {
+  async updateProduct(id: number,namePart: string,numberPart: number,amount: number,image: string,description: string,price: number,conditions: string,status:boolean): Promise<product | null> {
     try {
       let sql =
         "UPDATE products SET namePart = ?, numberPart = ?, amount = ?, image = ?, description = ?, price = ?, conditions = ?, status = ? WHERE id = ?";
         console.log("entro sentencia")
 
-      const params: any[] = [namePart,numberPart,amount,image,description,price,conditions,status,id];
+      const params: any[] = [namePart,numberPart,amount,image,description,price,conditions,id];
 
       console.log(params);
       const [result]: any = await query(sql, params);
@@ -124,12 +124,20 @@ export class mysqlProductRepositorys implements productsRepository {
     }
   }
 
-  async viewUserShop(customer_id: string): Promise<string | shoppingRe | null> {
+  async viewUserShop(customer_id: string): Promise<string | shoppingRe | null|any> {
     try {
       const sql = "SELECT * FROM customer_data WHERE customer_id = ?";
       const params: any[] = [customer_id];
-      const [result]: any = await query(sql, params);
-      return new shoppingRe(customer_id,result.given_name,result.surname,result.email_address,result.country_code,result.address_line_1,result.address_line_2,result.admin_area_1,result.admin_area_2,result.postal_code,result.corrency_code,result.amount,result.create_time)
+      const [rows]: any = await query(sql, params);
+      //console.log("result",result)
+      //return new shoppingRe(customer_id,result.given_name,result.surname,result.email_address,result.country_code,result.address_line_1,result.address_line_2,result.admin_area_1,result.admin_area_2,result.postal_code,result.corrency_code,result.amount,result.create_time)
+      if(rows[0]){
+        return rows.map((row:any)=>({customer_id:row.customer_id,given_name:row.given_name,surname:row.surname,email_address:row.email_address,country_code:row.country_code,address_line_1:row.address_line_1,address_line_2:row.address_line_2,admin_area_1:row.admin_area_1,admin_area_2:row.admin_area_2,postal_code:row.postal_code,currency_code:row.currency_code,amount:row.amount,create_time:row.create_time}))
+      }else{
+        throw new Error(
+          "No se encontro ningun registro de compras"
+        );
+      }
     } catch (error) {
       console.error("Error no hay ninguna compra registrada por ese usuario:", error);
       return null;

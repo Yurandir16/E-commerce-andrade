@@ -19,6 +19,7 @@ export class viewUserShopReUseCase {
             const viewUserShop = await this.registerShopRepository.viewUserShop(
                 customer_id
             );
+            console.log("case use:",viewUserShop)
             return viewUserShop;
         }catch (error) {
             return null;
