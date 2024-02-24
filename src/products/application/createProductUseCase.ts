@@ -8,21 +8,18 @@ export class CreateProductUseCase {
     constructor(readonly productRepository: productsRepository){}
 
     async run (
-        id:number,namePart:string,numberPart:number,amount:number, image:string,description:string, price:number,conditions:string,status:boolean
-    ): Promise<product | null | string | Error>{
+        id:number,brand:string,model:string,numberPart:string,description:string, price:number,stock:number,conditions:string,status:boolean,img1:string,img2:string,img3:string,img4:string,img5:string): Promise<product | null | string | Error>{
 
-        let data = new ValidatorCreateProduct(id, namePart,numberPart,amount,image,description,price,conditions,status);
+        let data = new ValidatorCreateProduct(model,numberPart,brand,stock,description,price,conditions,status,img1);
         const validation = await validate(data)
-        console.log(validation)
         if(validation.length > 0){
             throw new Error(JSON.stringify(validation))
         }
 
         try{
             const createProduct = await this.productRepository.createProduct(
-                id, namePart,numberPart,amount,image,description,price,conditions,status
+                id,brand,model,numberPart,description,price,stock,conditions,status,img1,img2,img3,img4,img5
             );
-
             return createProduct;
         }catch (error) {
             return null;

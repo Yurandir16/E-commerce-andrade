@@ -28,7 +28,6 @@ export class CreateProductCartController {
                 return res.status(201).send({
                     status: "success",
                     data: {
-                        id: createCartProduct.id,
                         user_id:createCartProduct.user_id,
                         product_id:createCartProduct.product_id
                     }

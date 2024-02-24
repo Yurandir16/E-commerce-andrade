@@ -13,7 +13,7 @@ export class CreateProductCartUseCase {
         product_id:number
     ): Promise<cart | null | string | Error>{
 
-        let data = new validatorPostProduct(id, user_id, product_id);
+        let data = new validatorPostProduct(user_id, product_id);
         const validation = await validate(data)
         console.log(validation)
         if(validation.length > 0){

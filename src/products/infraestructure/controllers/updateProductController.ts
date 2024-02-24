@@ -12,17 +12,24 @@ export class updateProductControlller {
        
         console.log("controller")
         try {
-            let id = Number(req.params.id);
-            let namePart = req.body.namePart;
-            let numberPart = Number(req.body.numberPart);
-            let amount = Number(req.body.amount);
-            let image = req.file?.originalname ||'';
+            let id = Number(req.body.id);
+            let brand = req.body.brand;
+            let model = req.body.model;
+            let numberPart = req.body.numberPart;
+            let stock = Number(req.body.stock);
             let description = req.body.description;
             let price = Number(req.body.price);
             let conditions = req.body.conditions;
             let status = Boolean(req.body.status);
+
+            let img1 = req.file?.originalname ||'';
+            let img2 = req.file?.originalname ||'';
+            let img3 = req.file?.originalname ||'';
+            let img4 = req.file?.originalname ||'';
+            let img5 = req.file?.originalname ||'';
            
-            let updatePro = await this.updateProductCase.run(id,namePart,numberPart,amount,image,description,price,conditions,status)
+            let updatePro = await this.updateProductCase.run(id,brand,model,numberPart,description,price,stock,conditions,status,img1,img2,img3,img4,img5)
+            //let updatePro = await this.updateProductCase.run(id, image_fk,model,numberPart,brand,amount,description,price,conditions,status)
             console.log(updatePro)
             if ( updatePro instanceof Error) {
                return res.status(409).send({
@@ -34,13 +41,19 @@ export class updateProductControlller {
                 return res.status(201).send({
                     status:"success",
                     data:{
-                        namePart:updatePro.namePart,
+                        //image_fk: updatePro.image_fk,
+                        model:updatePro.model,
                         numberPart:updatePro.numberPart,
-                        amount:updatePro.amount,
-                        image: updatePro.image,
+                        brand:updatePro.brand,
+                        stock:updatePro.stock,
                         description: updatePro.description,
                         price: updatePro.price,
                         conditions:updatePro.conditions,
+                        img1:updatePro.img1,
+                        img2:updatePro.img2,
+                        img3:updatePro.img3,
+                        img4:updatePro.img4,
+                        img5:updatePro.img5,
                         status: updatePro.status,
                     }
                 })

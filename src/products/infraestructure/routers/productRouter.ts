@@ -16,8 +16,15 @@ const upload = multer({ storage });
 
 export const proRoutes = express.Router();
 
-proRoutes.post('/addProduct', upload.single('image'), createProController.createProduct.bind(createProController));
-proRoutes.get('/viewImage', viewImageProController.viewImageProduct.bind(viewImageProController));
+proRoutes.post('/addProduct', upload.fields([
+  { name: 'img1', maxCount: 1 },
+  { name: 'img2', maxCount: 1 },
+  { name: 'img3', maxCount: 1 },
+  { name: 'img4', maxCount: 1 },
+  { name: 'img5', maxCount: 1 }]), 
+createProController.createProduct.bind(createProController));
+
+proRoutes.get('/viewImage/:imgId', viewImageProController.viewImageProduct.bind(viewImageProController));
 proRoutes.get('/listProduct', viewProController.viewProduct.bind(viewProController));
 proRoutes.get('/viewRegisterShop',viewReShopController.viewRegisterShop.bind(viewReShopController));
 proRoutes.get('/viewUserShop/:customer_id',viewUserShopController.viewShopUser.bind(viewUserShopController));

@@ -24,23 +24,33 @@ export class mysqlCartProductRepositorys implements cartRepository {
 
   async viewCartProduct(uuid: string): Promise<any[] | null> {
     try {
+
       const sql = `
-      SELECT p.namePart, p.numberPart, p.amount, p.image, p.description, p.price, p.conditions
-      FROM cartShopping cs JOIN user u ON cs.user_id = u.uuid JOIN products p ON cs.product_id = p.id
-      WHERE u.uuid = ?
-      `;
+        SELECT 
+            p.image_fk, p.brand, p.model, p.numberPart, p.stock, p.description, p.price, p.conditions,
+            i.img1
+        FROM 
+            cartShopping cs 
+            JOIN user u ON cs.user_id = u.uuid 
+            JOIN products p ON cs.product_id = p.id
+            JOIN image i ON p.image_fk = i.id
+        WHERE 
+            u.uuid = ?
+        `;
 
       const [rows]: any = await query(sql, [uuid]);
 
       if (rows.length > 0) {
         return rows.map((row: any) => ({
-          productName: row.namePart,
+          image_fk:row.image_fk,
+          brand:row.brand,
+          model:row.model,
           productNumber: row.numberPart,
-          amount: row.amount,
-          image: row.image,
+          stock: row.stock,
           description: row.description,
           price: row.price,
-          conditions: row.conditions
+          conditions: row.conditions,
+          img1:row.img1
         }));
       } else {
         throw new Error("El carrito del usuario está vacío.");
@@ -51,13 +61,13 @@ export class mysqlCartProductRepositorys implements cartRepository {
     }
   }
 
-  async deleteCartProduct(id: number): Promise<string | null|boolean> {
+  async deleteCartProduct(id: number): Promise<string | null | boolean> {
     try {
       const sql = "DELETE FROM cartShopping WHERE id = ?";
       const params: any[] = [id];
-  
+
       const [result]: any = await query(sql, params);
-  
+
       if (result.affectedRows > 0) {
         return true;
       } else {
@@ -68,5 +78,4 @@ export class mysqlCartProductRepositorys implements cartRepository {
       return null;
     }
   }
-  
 }

@@ -23,10 +23,10 @@ export class deleteProductControlller {
                     message: deletePro.message
                 });
             } 
-            if (deletePro instanceof product){
+            if (deletePro===true){
                 return res.status(201).send({
                     status:"success",
-                    data:"Prodcut eliminado"
+                    data:"Producto eliminado"
                 })
             }else{
                 return res.status(500).send({

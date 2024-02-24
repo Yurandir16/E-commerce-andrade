@@ -2,25 +2,22 @@ import { IsString, IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
 
 
 export class ValidatorCreateProduct{
-    @IsNotEmpty()
-    @IsNumber()
-    public id:number;
 
     @IsNotEmpty()
     @IsString()
-    public namePart:string;
-
-    @IsNotEmpty()
-    @IsNumber()
-    public numberPart:number;
-
-    @IsNotEmpty()
-    @IsNumber()
-    public amount: number;
+    public model:string;
 
     @IsNotEmpty()
     @IsString()
-    public image:string;
+    public numberPart:string;
+
+    @IsNotEmpty()
+    @IsString()
+    public brand:string;
+
+    @IsNotEmpty()
+    @IsNumber()
+    public stock: number;
 
     @IsNotEmpty()
     @IsString()
@@ -37,27 +34,32 @@ export class ValidatorCreateProduct{
     @IsNotEmpty()
     @IsBoolean()
     public status:boolean;
+
+    @IsNotEmpty()
+    @IsString()
+    public img1:string;
     
     constructor(
-        id:number,
-        namePart:string,
-        numberPart:number,
-        amount: number,
-        image:string,
+        model:string,
+        numberPart:string,
+        brand:string,
+        stock:number,
         description:string,
         price:number,
         conditions:string,
-        status:boolean
+        status:boolean,
+        img1:string
     ){
-        this.id=id;
-        this.namePart=namePart;
+
+        this.model=model;
         this.numberPart=numberPart;
-        this.amount= amount;
-        this.image=image;
+        this.brand=brand;
+        this.stock=stock;
         this.description=description;
         this.price=price;
         this.conditions=conditions;
         this.status=status;
+        this.img1=img1;
     }
 
 }
@@ -65,24 +67,20 @@ export class ValidatorCreateProduct{
 
 export class ValidatorUpdateProduct{
     @IsNotEmpty()
-    @IsNumber()
-    public id:number;
+    @IsString()
+    public model:string;
 
     @IsNotEmpty()
     @IsString()
-    public namePart:string;
-
-    @IsNotEmpty()
-    @IsNumber()
-    public numberPart:number;
-
-    @IsNotEmpty()
-    @IsNumber()
-    public amount: number;
+    public numberPart:string;
 
     @IsNotEmpty()
     @IsString()
-    public image:string;
+    public brand:string;
+
+    @IsNotEmpty()
+    @IsNumber()
+    public stock: number;
 
     @IsNotEmpty()
     @IsString()
@@ -99,27 +97,32 @@ export class ValidatorUpdateProduct{
     @IsNotEmpty()
     @IsBoolean()
     public status:boolean;
+
+    @IsNotEmpty()
+    @IsString()
+    public img1:string;
     
     constructor(
-        id:number,
-        namePart:string,
-        numberPart:number,
-        amount: number,
-        image:string,
+        model:string,
+        numberPart:string,
+        brand:string,
+        stock:number,
         description:string,
         price:number,
         conditions:string,
-        status:boolean
+        status:boolean,
+        img1:string
     ){
-        this.id=id;
-        this.namePart=namePart;
+
+        this.model=model;
         this.numberPart=numberPart;
-        this.amount= amount;
-        this.image=image;
+        this.brand=brand;
+        this.stock=stock;
         this.description=description;
         this.price=price;
         this.conditions=conditions;
         this.status=status;
+        this.img1=img1;
     }
 
 }
@@ -151,15 +154,17 @@ export class validatorViewUserShop{
 
 export class validatorImage{
     @IsNotEmpty()
-    @IsString()
-    public image:string;
+    @IsNumber()
+    public imgId:number;
 
     constructor(
-        image:string
+        imgId:number
     ){
-        this.image=image;
+        this.imgId=imgId;
     }
 }
+
+
 export class ValidatorInactivateProduct{
     @IsNotEmpty()
     @IsNumber()

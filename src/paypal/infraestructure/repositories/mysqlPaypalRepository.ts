@@ -3,44 +3,85 @@ import https from 'https';
 import { query } from "../../../database/connection";
 
 export class PaypalRepositoryr implements paypalRepository {
-    async createPaypal(uuid:string): Promise<any | null> {
-        const client = process.env.CLIENT_SECRET
-        const secret = process.env.SECRET_KEY
-        const host = process.env.HOST_API
+    async createPaypal(uuid: string): Promise<any | null> {
+        const client = process.env.CLIENT_SECRET;
+        const secret = process.env.SECRET_KEY;
+        const host = process.env.HOST_API;
     
         try {
             console.log("Conexión exitosa a la BD");
-            if (uuid!=null) {
-                const sql = `SELECT  SUM(p.price)
-                FROM cartShopping cs JOIN user u ON cs.user_id = u.uuid JOIN products p ON cs.product_id = p.id
-                WHERE u.uuid = ?;	
-              `;
+            if (uuid != null) {
+    
+                const sql = `
+                    SELECT p.brand, p.model, p.numberPart, p.price
+                    FROM cartShopping cs 
+                    JOIN user u ON cs.user_id = u.uuid 
+                    JOIN products p ON cs.product_id = p.id
+                    WHERE u.uuid = ?;	
+                `;
+    
                 const result = await query(sql, [uuid]);
+
+                interface Product {
+                    brand:string,
+                    model:string,
+                    numberPart: string;
+                    price: number;
+                }
                 
-                console.log(result)
-
+                const resultRows = result[0] as Product[];
+    
                 if (result.length > 0) {
-                    const amount = result[0][0]['SUM(p.price)'];
+                    const products = resultRows.map(row => ({
+                        brand:row.brand,
+                        model:row.model,
+                        name: row.numberPart,
+                        unit_amount: {
+                            currency_code: 'MXN',
+                            value: row.price
+                        },
+                        quantity: '1'
+                    }));
 
-                    if (typeof amount !== 'undefined') {
-                        console.log(amount)
+                    console.log(products)
+                
+                    const amount = resultRows.reduce((acc, row) => acc + row.price, 0);
+
+                    if (products.length > 0) {
+                        for (const product of products) {
+                            const insertProductQuery = `
+                                INSERT INTO historys (uuid_user, brand, model, numberPart, price)
+                                VALUES (?, ?, ?,?,?);
+                            `;
+                            await query(insertProductQuery, [uuid,product.brand,product.model,product.name, product.unit_amount.value]);
+                        }    
                         const body = {
                             intent: 'CAPTURE',
                             purchase_units: [{
                                 amount: {
                                     currency_code: 'MXN',
-                                    value: amount 
-                                }
+                                    value: amount,
+                                    breakdown: {
+                                        item_total: {
+                                            currency_code: 'MXN',
+                                            value: amount
+                                        }
+                                    }   
+                                },
+                                items: products.map(product => ({
+                                    name: product.name,
+                                    unit_amount: product.unit_amount,
+                                    quantity: product.quantity
+                                })) 
                             }],
                             application_context: {
                                 brand_name: `ANDRADE TECNOLOGY THAT INSPIRES`,
                                 landing_page: 'NO_PREFERENCE',
                                 user_action: 'PAY_NOW',
-                                return_url: `http://localhost:3000/paypal/extracter_payment/`,
-                                cancel_url: `http://localhost:3000/cancel-payment`
+                                return_url: `http://localhost:3003/paypal/extracter_payment/`,
+                                cancel_url: `http://localhost:3003/cancel-payment`
                             }
-                        };
-    
+                        };  
                         const options = {
                             hostname: host,
                             port: 443,
@@ -85,7 +126,7 @@ export class PaypalRepositoryr implements paypalRepository {
             return null;
         } 
     }
-
+    
     async viewPaypal(token: string): Promise<any | null> {
 
         const client = process.env.CLIENT_SECRET
@@ -111,7 +152,7 @@ export class PaypalRepositoryr implements paypalRepository {
     
                     res.on('data', (chunk) => {
                         data += chunk;
-                        console.log(data)
+                        console.log("datos:",data)
 
                         try {
                             const orderData = JSON.parse(data);
@@ -142,10 +183,11 @@ export class PaypalRepositoryr implements paypalRepository {
                                 addressLine1, addressLine2, adminArea1, adminArea2,
                                 postalCode, currencyCode, amount
                             ];
-                    
                             query(insertQuery, values);
-                    
+                            
+                            const sql2 = '';
                             console.log('Datos del cliente insertados correctamente.');
+                            
                         } catch (error) {
                             console.error('Error al insertar datos del cliente:', error);
                             return null;

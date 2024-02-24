@@ -26,16 +26,32 @@ export class inactiveProductController {
                     message:"product inactivate"
                 });
             } 
-            if (inactive instanceof product){
-                return res.status(201).send({
-                    status:"success"
-                })
+            if (status!=true){
+                if (inactive instanceof product){
+                    return res.status(201).send({
+                        status:"success",
+                        data:"se inactivo el producto"
+                    })
+                }else{
+                    return res.status(500).send({
+                        status:"error",
+                        message:"An unexpected error occurred inactive"
+                    })
+                }
             }else{
-                return res.status(500).send({
-                    status:"error",
-                    message:"An unexpected error occurred inactive"
-                })
+                if (inactive instanceof product){
+                    return res.status(201).send({
+                        status:"success",
+                        data:"se activo el producto"
+                    })
+                }else{
+                    return res.status(500).send({
+                        status:"error",
+                        message:"An unexpected error occurred inactive"
+                    })
+                }
             }
+           
         } catch (error) {
             return null;
         }

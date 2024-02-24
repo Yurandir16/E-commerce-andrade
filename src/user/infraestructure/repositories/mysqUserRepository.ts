@@ -98,11 +98,11 @@ export class MysqlUserRepository implements IUsuarioRepository {
                 body: `
                     <p>Hola ${user.name},</p>
                     <p>Gracias por registrarte. Por favor, haga clic en el botón de abajo para verificar su dirección de correo electrónico:</p>
-                    <a href="http://192.168.1.125:3000/user/verify/${user.uuid}">
+                    <a href="http://192.168.1.121:3003/user/verify/${user.uuid}">
                         <button style="padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">Verificar Email</button>
                     </a>
                     <p>Si el botón no funciona, también puede copiar y pegar el siguiente enlace en su navegador:</p>
-                    <p>http://192.168.1.125:3000/user/verify/${user.uuid}</p>
+                    <p>http://192.168.1.121:3003/user/verify/${user.uuid}</p>
                 `,
             };
 

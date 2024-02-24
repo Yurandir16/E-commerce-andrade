@@ -13,7 +13,7 @@ export class ResgisterUserController {
     }
 
     async run(req: Request, res: Response) {
-        console.log('controller');
+        console.log('controller register');
 
         try {
             let {
@@ -45,7 +45,7 @@ export class ResgisterUserController {
                 } else {
                     return res.status(500).send({
                         status: "error",
-                        message: registerUser.message,
+                        message: "error no entro el registro",
                     });
                 }
             }

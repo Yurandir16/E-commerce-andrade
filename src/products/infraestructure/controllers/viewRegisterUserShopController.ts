@@ -16,11 +16,11 @@ export class viewRegisterShopController {
                     message: viewRegiserShop.message
                 });
             }
-
+            
             if (Array.isArray(viewRegiserShop) && viewRegiserShop.length > 0) {
                 return res.status(200).send({
                   status: "success",
-                  data: viewRegiserShop
+                  data:"Todos los registros de compras:", viewRegiserShop
                 });
               } else {
                 return res.status(404).send({

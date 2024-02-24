@@ -8,10 +8,10 @@ export class UpdateProductUseCase {
     constructor(readonly productRepository: productsRepository){}
 
     async run (
-        id:number,namePart:string,numberPart:number,amount:number, image:string,description:string, price:number,conditions:string,status:boolean
+        id:number,brand:string,model:string,numberPart:string,description:string, price:number,stock:number,conditions:string,status:boolean,img1:string,img2:string,img3:string,img4:string,img5:string
     ): Promise<product | null | string | Error>{
 
-        let data = new ValidatorUpdateProduct(id, namePart,numberPart,amount,image,description,price,conditions,status);
+        let data = new ValidatorUpdateProduct(model,numberPart,brand,stock,description,price,conditions,status,img1);
         const validation = await validate(data)
         console.log(validation)
         if(validation.length > 0){
@@ -19,11 +19,11 @@ export class UpdateProductUseCase {
         }
 
         try{
-            const createProduct = await this.productRepository.updateProduct(
-                id, namePart,numberPart,amount,image,description,price,conditions,status
+            const updateProduct = await this.productRepository.updateProduct(
+                id,brand,model,numberPart,description,price,stock,conditions,status,img1,img2,img3,img4,img5
             );
 
-            return createProduct;
+            return updateProduct;
         }catch (error) {
             return null;
         }

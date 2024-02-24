@@ -11,3 +11,13 @@ export class productClient{
         public status:boolean
     ){ }
 }
+
+export class history{
+    constructor(
+        public id:number,
+        public uuid_user:string,
+        public name:string,
+        public price:number,
+        public create_time:Date
+    ){}
+}
